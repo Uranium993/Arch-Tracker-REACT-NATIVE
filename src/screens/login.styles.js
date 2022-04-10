@@ -43,11 +43,11 @@ export default function useStyles() {
       paddingHorizontal: 16,
     },
     label: {
-      color: "rgba(235, 235, 245, 0.6)",
+      color: "#73d13d",
       fontSize: 15,
       fontWeight: "400",
       lineHeight: 20,
-      width: 80,
+      width: 100,
     },
     root: {
       backgroundColor: "#000000",
@@ -69,8 +69,10 @@ export default function useStyles() {
       lineHeight: 20,
     },
     textInput: {
+      marginLeft: 5,
       color: "#FFFFFF",
       flex: 1,
+      fontSize: 18,
     },
     title: {
       color: "#FFFFFF",

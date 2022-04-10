@@ -1,46 +1,20 @@
-import * as React from "react";
-import { List, Button } from "react-native-paper";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { Button } from "react-native-paper";
 
-const Accordion = () => {
-  const [expanded, setExpanded] = React.useState(true);
-  const email = "vesna@gmail.com";
-  const handlePress = () => setExpanded(!expanded);
-
+const ExpandBox = ({ singleProject }) => {
   return (
-    <List.Accordion
-      title="292992"
-      theme={{ colors: { background: "white" } }}
-      left={() => <InitialInfoSection />}
-      expanded={expanded}
-      onPress={handlePress}
-      titleStyle={{ marginTop: 4 }}
-    >
-      <List.Item
-        style={{ marginTop: 15 }}
-        left={() => <LeftSide email={email} />}
-        right={() => <RightSide />}
-      />
-      <List.Item left={() => <EADbuttons />} />
-    </List.Accordion>
-  );
-};
-
-export default Accordion;
-
-const InitialInfoSection = () => {
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        width: "50%",
-        marginLeft: 2,
-      }}
-    >
-      <Text style={{ fontSize: 18 }}>Djordje Radanovic</Text>
+    <View style={{ margin: 10 }}>
+      <View style={{ flexDirection: "row" }}>
+        <LeftSide />
+        <RightSide singleProject={singleProject} />
+      </View>
+      <EADbuttons />
     </View>
   );
 };
+
+export default ExpandBox;
 
 const LeftSide = () => {
   return (
@@ -48,7 +22,7 @@ const LeftSide = () => {
       style={{
         flexDirection: "column",
         width: "30%",
-        height: 120,
+        height: 100,
         justifyContent: "space-between",
       }}
     >
@@ -60,21 +34,24 @@ const LeftSide = () => {
   );
 };
 
-const RightSide = () => {
+const RightSide = ({ singleProject }) => {
+  const { clientMail, clientNumber, estimatedWorth, finalWorth } =
+    singleProject;
+
   return (
     <View
       style={{
         marginRight: 20,
         flexDirection: "column",
         width: "50%",
-        height: 120,
+        height: 100,
         justifyContent: "space-between",
       }}
     >
-      <Text>djordjino@gmail.com</Text>
-      <Text>051 2525 515</Text>
-      <Text>30340</Text>
-      <Text>34356</Text>
+      <Text>{clientMail}</Text>
+      <Text>{clientNumber}</Text>
+      <Text>{estimatedWorth}</Text>
+      <Text>{finalWorth}</Text>
     </View>
   );
 };
@@ -87,11 +64,13 @@ const EADbuttons = () => {
         flexDirection: "row",
         justifyContent: "space-around",
         width: "100%",
+        marginTop: 15,
       }}
     >
       <Button
         icon="update"
         mode="outlined"
+        compact={true}
         onPress={() => console.log("Pressed")}
       >
         EDIT
@@ -99,6 +78,7 @@ const EADbuttons = () => {
       <Button
         icon="archive"
         mode="outlined"
+        compact={true}
         onPress={() => console.log("Pressed")}
       >
         ARCHIVE
@@ -107,6 +87,7 @@ const EADbuttons = () => {
         icon="delete"
         color="#ff4d4f"
         mode="outlined"
+        compact={true}
         onPress={() => console.log("Pressed")}
       >
         DELETE

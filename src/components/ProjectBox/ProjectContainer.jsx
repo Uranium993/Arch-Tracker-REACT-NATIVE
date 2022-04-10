@@ -1,16 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import PhasesBox from "./PhasesBox";
 import Accordion from "./Accordion";
 
-const ProjectContainer = () => {
-  return (
-    <View style={[styles.container, styles.shadowProp, styles.elevation]}>
-      <PhasesBox />
+const ProjectContainer = ({ singleProject }) => {
+  const [expandContainer, setExpandContainer] = useState(false);
 
-      <View style={styles.accordion}>
-        <Accordion />
-      </View>
+  return (
+    <View
+      style={[
+        styles.container,
+        styles.shadowProp,
+        styles.elevation,
+        {
+          height: expandContainer ? 280 : 85,
+        },
+      ]}
+    >
+      <Accordion
+        singleProject={singleProject}
+        setExpandContainer={setExpandContainer}
+      />
+
+      <PhasesBox />
     </View>
   );
 };
@@ -19,17 +31,13 @@ export default ProjectContainer;
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 5,
     flexDirection: "column",
     margin: 7,
     backgroundColor: "white",
-    height: 120,
     width: "96%",
     borderRadius: 10,
     justifyContent: "flex-start",
-  },
-
-  accordion: {
-    marginTop: 6,
   },
 
   shadowProp: {

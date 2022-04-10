@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Modal,
 } from "react-native";
 import React, { useRef, useState, useEffect } from "react";
 // Components
@@ -17,11 +18,11 @@ import useStyles from "./login.styles";
 import { auth } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
 import firebase from "firebase";
-import EmailInput from "../components/buttons&inputs/EmailInput";
-import PasswordInput from "../components/buttons&inputs/PasswordInput";
-import ConfirmPasswordInput from "../components/buttons&inputs/ConfirmPasswordInput";
+import EmailInput from "../components/LoginInputs/EmailInput";
+import PasswordInput from "../components/LoginInputs/PasswordInput";
+import ConfirmPasswordInput from "../components/LoginInputs/ConfirmPasswordInput";
 import { useDispatch } from "react-redux";
-import { getUserToken } from "../Redux/slices/authSlice";
+import { addToken, getUserToken } from "../Redux/slices/authSlice";
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -32,10 +33,15 @@ const LoginScreen = () => {
   const passwordInput = useRef();
   const confirmPasswordInput = useRef();
   const [signup, setSignup] = useState(false);
+  const [verificationModal, setVerificationModal] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      // user.emailVerified
       if (user) {
+        user.getIdToken().then((token) => {
+          dispatch(addToken(token));
+        });
         navigation.navigate("Dashboard");
       }
     });
@@ -55,14 +61,14 @@ const LoginScreen = () => {
     auth
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .then((userCred) => {
-        console.log(userCred.credential.idToken);
+        dispatch(addToken(userCred.credential.idToken));
       });
   };
 
   const onSubmit = handleSubmit(async ({ email, password }) => {
     try {
       const user = await auth.signInWithEmailAndPassword(email, password);
-      //console.log(user);
+      console.log("user returned from firebase (line 70, login)");
     } catch (err) {
       console.log(err.message);
     }
@@ -76,6 +82,7 @@ const LoginScreen = () => {
       Alert("Passwords do not match");
     } else {
       dispatch(getUserToken(data));
+      setVerificationModal(true);
     }
   };
 
@@ -92,7 +99,14 @@ const LoginScreen = () => {
             <SizedBox height={8} />
 
             <Text style={styles.subtitle}>Sign in to your account</Text>
-
+            <Modal
+              animationType="fade"
+              visible={verificationModal}
+              style={{ backgroundColor: "white" }}
+              onRequestClose={() => setVerificationModal(false)}
+            >
+              <Text> VERIFICATION LINK IS SENT TO THE PROVIDED EMAIL </Text>
+            </Modal>
             <SizedBox height={32} />
 
             <EmailInput

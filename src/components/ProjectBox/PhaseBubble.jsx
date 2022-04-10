@@ -1,11 +1,6 @@
 import React from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-} from "react-native";
+import { useState } from "react";
+import { Text, TouchableOpacity, StyleSheet, Platform } from "react-native";
 
 const PhaseBubble = ({ name, onPress, color }) => {
   return (
@@ -27,22 +22,22 @@ export default PhaseBubble;
 
 const style = StyleSheet.create({
   phaseButton: {
-    width: Platform.OS === "ios" ? "60%" : "160%",
-    height: 45,
-    borderRadius: 50,
+    width: Platform.OS === "ios" ? "80%" : "190%",
+    height: 35,
+    borderRadius: 20,
   },
   text: {
     textAlign: "center",
-    marginTop: "25%",
+    marginTop: "14%",
   },
   elevation: {
-    elevation: 6,
+    elevation: 5,
     shadowColor: "#52006A",
   },
   shadowProp: {
     shadowColor: "black",
-    shadowOffset: { width: -2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    shadowOffset: { width: -2, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
 });

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Modal, SafeAreaView } from "react-native";
 import ModalPicker from "./ModalPicker";
-import PhaseBubble from "../Project Box/PhaseBubble";
+import PhaseBubble from "../ProjectBox/PhaseBubble";
 
 const PhaseMenu = ({ name }) => {
   const [chooseColor, setChooseColor] = useState("#bfbfbf");
@@ -21,7 +21,6 @@ const PhaseMenu = ({ name }) => {
         name={name}
         color={chooseColor}
         onPress={() => changeModalVisibility(true)}
-        // style={styles.touchableOpacity}
       ></PhaseBubble>
       <Modal
         transparent={true}
@@ -46,13 +45,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-  },
-  text: {
-    fontSize: 20,
-  },
-  touchableOpacity: {
-    backgroundColor: "orange",
-    alignSelf: "stretch",
-    padding: 10,
   },
 });

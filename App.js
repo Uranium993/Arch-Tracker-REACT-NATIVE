@@ -1,4 +1,5 @@
 //import { StatusBar } from "expo-status-bar";
+
 import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -6,56 +7,72 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./src/screens/Login";
 import Dashboard from "./src/screens/Dashboard";
 import { Provider } from "react-redux";
-import store from "./src/Redux/store";
-import { useSelector } from "react-redux";
+import { store } from "./src/Redux/store";
+import { useSelector, useDispatch } from "react-redux";
 import { AppRegistry, LogBox } from "react-native";
 import { Provider as PaperProvider, Button } from "react-native-paper";
 import { auth } from "./firebase";
+import { useNavigation } from "@react-navigation/native";
+import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
+import { projectList } from "./src/Redux/rtkQuery/api";
+import { getProjects } from "./src/Redux/rtkQuery/api";
 
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs();
 
-const handleSignOut = () => {
-  auth
-    .signOut()
-    .then(() => {
-      navigation.replace("Login");
-    })
-    .catch((error) => alert(error.message));
-};
-
 function AppWrapper() {
-  const { userName } = useSelector((state) => state.authReducer);
+  //const { userName } = useSelector((state) => state.authReducer);
+
+  //const dispatch = useDispatch()
+
+  // const signOut = () => {
+  //   dispatch()
+  // };
+
+  const navigation = useNavigation();
+
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Login" }],
+        });
+      })
+      .catch((error) => alert(error.message));
+  };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={() => ({
-          headerRight: () => (
-            <Button color="" mode="contained" onPress={handleSignOut}>
-              sign out
-              {/* <Text style={styles.buttonText}>Sign out</Text> */}
-            </Button>
+    <Stack.Navigator
+      screenOptions={() => ({
+        headerRight: () => (
+          <Button color="" onPress={handleSignOut}>
+            sign out
+            {/* <Text style={styles.buttonText}>Sign out</Text> */}
+          </Button>
+        ),
+      })}
+    >
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Dashboard"
+        component={Dashboard}
+        options={{
+          headerLeft: () => (
+            <Button icon="menu" mode="outlined" compact={true} />
           ),
-        })}
-      >
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Dashboard"
-          component={Dashboard}
-          options={{
-            headerLeft: () => <Text></Text>,
-            title: `Welcome`,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+
+          title: `Welcome`,
+        }}
+      />
+    </Stack.Navigator>
   );
 }
 
@@ -63,11 +80,15 @@ export default function App() {
   AppRegistry.registerComponent("expo-arch-tracker", () => App);
 
   return (
-    <Provider store={store}>
-      <PaperProvider>
-        <AppWrapper />
-      </PaperProvider>
-    </Provider>
+    <ApiProvider api={projectList}>
+      <Provider store={store}>
+        <NavigationContainer>
+          <PaperProvider>
+            <AppWrapper />
+          </PaperProvider>
+        </NavigationContainer>
+      </Provider>
+    </ApiProvider>
   );
 }
 
