@@ -35,10 +35,10 @@ export const projectList = createApi({
       }),
     }),
     updatePhase: builder.mutation({
-      query: (data, projectID, phaseID) => ({
+      query: ({ projectID, phaseID, ...rest }) => ({
         url: `/projects/${projectID}/${phaseID}`,
         method: "PATCH",
-        body: data,
+        body: rest,
       }),
     }),
 
