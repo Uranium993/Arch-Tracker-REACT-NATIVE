@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState, useReducer } from "react";
 import {
+  RefreshControl,
   StyleSheet,
   Text,
   View,
@@ -12,12 +13,56 @@ import { useSelector } from "react-redux";
 import ProjectContainer from "../components/ProjectBox/ProjectContainer";
 import SearchBar from "../components/LoginInputs/SearchBar";
 import Chart from "../components/Charts/Chart";
-import { projectList } from "../Redux/rtkQuery/api";
+import { useProjectsQuery } from "../Redux/rtkQuery/api";
 import AddProjectModalButton from "../components/AddProjectInputs/AddProjectModalButton";
 
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
+
 const Dashboard = () => {
+  const [testRender, setTestRender] = useState(false);
   const [leftOrRight, setLeftOrRight] = useState(true);
-  const { data, error, isLoading, isSuccess } = projectList.useProjectsQuery();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [masterData, setMasterData] = useState();
+  const [filteredData, setFilteredData] = useState();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+
+  const { data, isSuccess, error, isLoading } = useProjectsQuery();
+
+  const searchFilter = (text) => {
+    if (text) {
+      const newData = masterData.filter((item) => {
+        const itemData = item.clientName
+          ? item.clientName.toUpperCase()
+          : "".toUpperCase();
+        const textData = text.toUpperCase();
+
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredData(newData);
+      setSearchQuery(text);
+    } else {
+      setFilteredData(masterData);
+      setSearchQuery(text);
+    }
+  };
+
+  //ovde nesto ne valja!
+
+  useEffect(() => {
+    setMasterData(data);
+    setFilteredData(data);
+  }, [data, filteredData, masterData]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setFilteredData(masterData);
+    wait(1000).then(() => setRefreshing(false));
+  }, []);
 
   return (
     <View>
@@ -42,15 +87,28 @@ const Dashboard = () => {
             style={{ flexDirection: "row", justifyContent: "space-around" }}
           >
             <AddProjectModalButton />
-            <SearchBar />
+            <SearchBar searchFilter={searchFilter} searchQuery={searchQuery} />
           </View>
           {isLoading ? (
             <Text>LOADING...</Text>
           ) : isSuccess ? (
             <FlatList
-              data={data}
+              refreshControl={
+                <RefreshControl
+                  enabled={true}
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+              //---------------------------- VOJ TI SE RENDERUJU SVI PROJEKTI --------------------------------------------------------------------------
+              data={isSuccess && filteredData}
               renderItem={({ item }) => (
-                <ProjectContainer singleProject={item} />
+                <ProjectContainer
+                  //key={item._id + testRender}
+                  testRender={testRender}
+                  setTestRender={setTestRender}
+                  singleProject={item}
+                />
               )}
               keyExtractor={(item) => item._id}
             />

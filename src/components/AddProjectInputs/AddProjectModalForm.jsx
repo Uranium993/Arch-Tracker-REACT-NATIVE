@@ -47,6 +47,7 @@ const AddProjectModalForm = (props) => {
 
     await addProjectInfo(data);
     console.log("pressed");
+    props.changeModalVisibility(false);
   });
   return (
     <TouchableOpacity

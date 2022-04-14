@@ -3,18 +3,39 @@ import axios from "axios";
 
 export const projectList = createApi({
   reducerPath: "allProjects",
+  tagTypes: ["Projects", "Project"],
+
   baseQuery: fetchBaseQuery({
     baseUrl: "http://192.168.1.11:8080/api",
   }),
-  tagTypes: ["Projects"],
+
   endpoints: (builder) => ({
     projects: builder.query({
-      query: () => "/projects",
+      providesTags: ["Projects"],
 
-      providesTags: [{ type: "Projects", id: "LIST" }],
+      query: () => {
+        return {
+          headers: {
+            "Content-type": "application/json",
+          },
+          url: "/projects",
+        };
+      },
+    }),
+    getSingleProject: builder.query({
+      providesTags: ["Project"],
+      query: (id) => {
+        return {
+          headers: {
+            "Content-type": "application/json",
+          },
+          url: `/projects/${id}`,
+        };
+      },
     }),
     addProjectInfo: builder.mutation({
       query: ({ token, ...rest }) => {
+        console.log(token);
         return {
           url: "/projects",
           method: "POST",
@@ -26,31 +47,67 @@ export const projectList = createApi({
           body: rest,
         };
       },
+      invalidatesTags: ["Projects"],
     }),
     editProjectInfo: builder.mutation({
-      query: (project) => ({
-        url: "/projects",
-        method: "PUT",
-        body: project,
-      }),
+      query: ({ id, project }) => {
+        console.log(project);
+        return {
+          url: `/projects/${id}`,
+          method: "PATCH",
+          body: project,
+        };
+      },
     }),
     updatePhase: builder.mutation({
-      query: ({ projectID, phaseID, ...rest }) => ({
-        url: `/projects/${projectID}/${phaseID}`,
-        method: "PATCH",
-        body: rest,
-      }),
+      invalidatesTags: ["Project"],
+
+      query: ({ id, token, ...rest }) => {
+        return {
+          url: `/projects/update/${id}`,
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+
+            "x-auth-token": token,
+          },
+          body: rest,
+        };
+      },
+    }),
+
+    archiveProject: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/projects/${id}`,
+          method: "PATCH",
+          body: { inactive: true },
+        };
+      },
     }),
 
     deleteProject: builder.mutation({
-      query: (id) => ({
-        url: `/projects/${id}`,
-        method: "DELETE",
-        body: project,
-      }),
+      invalidatesTags: ["Projects"],
+      query: (id) => {
+        console.log(id);
+        return {
+          url: `/projects/${id}`,
+          method: "DELETE",
+        };
+      },
     }),
   }),
 });
+
+export const {
+  useProjectsQuery,
+  useUpdatePhaseMutation,
+  useAddProjectInfoMutation,
+  useEditProjectInfoMutation,
+  useDeleteProjectMutation,
+  useGetSingleProjectQuery,
+  useArchiveProjectMutation,
+} = projectList;
 
 // const api = axios.create({
 //   baseURL: "http://192.168.1.11:8080/api",

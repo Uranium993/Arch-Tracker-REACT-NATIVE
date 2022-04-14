@@ -1,9 +1,9 @@
 import { Pressable, View, Text, TextInput } from "react-native";
-import useStyles from "../../screens/login.styles";
-
+import { useStyles, useExpandBoxStyles } from "../../screens/login.styles";
 import React from "react";
 
 const FormInput = ({
+  expandBox,
   text,
   Controller,
   refInput,
@@ -13,7 +13,7 @@ const FormInput = ({
   textContentTypeProp,
   uniqueNameProp,
 }) => {
-  const styles = useStyles();
+  const styles = expandBox ? useExpandBoxStyles() : useStyles();
 
   return (
     <Pressable onPress={() => refInput.current?.focus()}>

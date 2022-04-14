@@ -1,5 +1,5 @@
 import { Pressable, View, Text, TextInput } from "react-native";
-import useStyles from "../../screens/login.styles";
+import { useStyles } from "../../screens/login.styles";
 
 import React from "react";
 

@@ -1,24 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, Text, View, Modal, SafeAreaView } from "react-native";
 import ModalPicker from "./ModalPicker";
 import PhaseBubble from "../ProjectBox/PhaseBubble";
-import { projectList } from "../../Redux/rtkQuery/api";
+import { useUpdatePhaseMutation } from "../../Redux/rtkQuery/api";
+import { useSelector } from "react-redux";
+const PhaseMenu = ({ setRerender, name, singleProject, arrPosition }) => {
+  const color = singleProject.phases[arrPosition].color;
 
-const PhaseMenu = ({ name }) => {
-  const [chooseColor, setChooseColor] = useState("#bfbfbf");
+  const [chooseColor, setChooseColor] = useState(color);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const changeModalVisibility = (bool) => {
     setIsModalVisible(bool);
   };
 
-  const [updatePhase] = projectList.useUpdatePhaseMutation();
+  const { testToken } = useSelector((state) => state.authReducer);
 
-  const setData = async (option) => {
-    await updatePhase(option);
+  const [updatePhase] = useUpdatePhaseMutation();
 
-    setChooseColor(option);
-  };
+  const setData = useCallback(async (option) => {
+    const colorData = {
+      token: testToken,
+      id: singleProject._id,
+      name,
+      color: option,
+    };
+
+    await updatePhase(colorData);
+
+    // Ovo kad pozovem, promijeni state u phaseBox komponenti i tako se key promijeni
+    // i onda komponenta se apdejtuje, al znam da vako ne treba
+    setTimeout(() => {
+      setRerender((prev) => !prev);
+    }, 500);
+  });
 
   return (
     <SafeAreaView style={styles.container}>

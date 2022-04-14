@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { setupListeners } from "@reduxjs/toolkit/query";
 import { projectList } from "./rtkQuery/api";
 import authSlice from "./slices/authSlice";
 
@@ -9,5 +8,10 @@ export const store = configureStore({
     [projectList.reducerPath]: projectList.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(projectList.middleware),
+    getDefaultMiddleware({ serializableCheck: false }).concat(
+      projectList.middleware
+    ),
 });
+
+// middleware: (getDefaultMiddleware) =>
+// getDefaultMiddleware().concat(projectList.middleware),

@@ -14,7 +14,7 @@ import React, { useRef, useState, useEffect } from "react";
 // Components
 import SizedBox from "../components/SizedBox";
 import { useForm, Controller } from "react-hook-form";
-import useStyles from "./login.styles";
+import { useStyles } from "./login.styles";
 import { auth } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
 import firebase from "firebase";
@@ -68,7 +68,8 @@ const LoginScreen = () => {
   const onSubmit = handleSubmit(async ({ email, password }) => {
     try {
       const user = await auth.signInWithEmailAndPassword(email, password);
-      console.log("user returned from firebase (line 70, login)");
+      const token = await user.user.getIdTokenResult().token;
+      dispatch(addToken(token));
     } catch (err) {
       console.log(err.message);
     }

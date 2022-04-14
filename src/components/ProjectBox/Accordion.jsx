@@ -35,19 +35,3 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 });
-
-// <List.Accordion
-//   title="292992"
-//   theme={{ colors: { background: "white" } }}
-//   left={() => <InitialInfoSection />}
-//   expanded={expanded}
-//   onPress={handlePress}
-//   titleStyle={{ marginTop: 4, marginLeft: 30 }}
-// >
-//   <List.Item
-//     style={{ marginTop: 15 }}
-//     left={() => <LeftSide email={email} />}
-//     right={() => <RightSide />}
-//   />
-//   <List.Item left={() => <EADbuttons />} />
-// </List.Accordion>

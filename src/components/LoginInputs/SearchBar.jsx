@@ -2,16 +2,12 @@ import * as React from "react";
 import { Platform, StyleSheet } from "react-native";
 import { Searchbar } from "react-native-paper";
 
-const SearchBar = () => {
-  const [searchQuery, setSearchQuery] = React.useState("");
-
-  const onChangeSearch = (query) => setSearchQuery(query);
-
+const SearchBar = ({ searchFilter, searchQuery }) => {
   return (
     <Searchbar
       style={styles.container}
       placeholder="Search"
-      onChangeText={onChangeSearch}
+      onChangeText={(text) => searchFilter(text)}
       value={searchQuery}
     />
   );
