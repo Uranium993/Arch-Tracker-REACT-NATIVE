@@ -9,25 +9,28 @@ import {
 } from "react-native-chart-kit";
 import React from "react";
 
-const Chart = () => {
+
+const Chart = ({ projects }) => {
+  let projectArr = projects.map((item) => {
+    return Number(item.finalWorth) || 0;
+  });
+
   return (
     <View style={{ marginLeft: 10, marginRight: 10 }}>
       <Text>Bezier Line Chart</Text>
       <LineChart
         data={{
-          labels: ["January", "February", "March", "April", "May", "June"],
+          //Gets dates for X axis
+          labels: projects?.map((project) => {
+            return project.date.toString().substring(5, 10);
+          }),
+
+          //gets values for Y axis
           datasets: [
             {
-              data: [
-                100, 200, 500, 192, 512, 22,
-
-                // Math.random() * 100,
-                // Math.random() * 100,
-                // Math.random() * 100,
-                // Math.random() * 100,
-                // Math.random() * 100,
-                // Math.random() * 100,
-              ],
+              data: projectArr?.map((project) => {
+                return project;
+              }),
             },
           ],
         }}

@@ -3,17 +3,19 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Button } from "react-native-paper";
 import {
   useDeleteProjectMutation,
-  useAddProjectInfoMutation,
   useArchiveProjectMutation,
   useEditProjectInfoMutation,
 } from "../../Redux/rtkQuery/api";
 import FormInput from "../AddProjectInputs/FormInput";
 import { useForm, Controller } from "react-hook-form";
+import { useSelector } from "react-redux";
 
 const ExpandBox = ({ singleProject }) => {
   const [enableInput, setEnableInput] = useState(false);
 
   const [editProjectInfo] = useEditProjectInfoMutation();
+
+  const { testToken } = useSelector((state) => state.authReducer);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -26,6 +28,7 @@ const ExpandBox = ({ singleProject }) => {
   const { _id } = singleProject;
   const onSubmit = handleSubmit(async (data) => {
     data.id = _id;
+    data.token = testToken;
     await editProjectInfo(data);
     setEnableInput(false);
   });
@@ -82,8 +85,8 @@ const RightSide = ({
   const finalWorthInput = useRef();
 
   const newClientInfoArr = [
-    { type: "email", info: clientMail, ref: emailInput },
-    { type: "phone", info: clientNumber, ref: clientNumberInput },
+    { type: "clientMail", info: clientMail, ref: emailInput },
+    { type: "clientNumber", info: clientNumber, ref: clientNumberInput },
     { type: "estimatedWorth", info: estimatedWorth, ref: estimatedWorthInput },
     { type: "finalWorth", info: finalWorth, ref: finalWorthInput },
   ];
@@ -127,7 +130,7 @@ const RightSide = ({
 const EADbuttons = ({ onSubmit, handleSubmit, id }) => {
   const [deleteProject] = useDeleteProjectMutation();
   const [archiveProject] = useArchiveProjectMutation();
-
+  const { testToken } = useSelector((state) => state.authReducer);
   return (
     <View
       style={{
@@ -149,7 +152,7 @@ const EADbuttons = ({ onSubmit, handleSubmit, id }) => {
         icon="archive"
         mode="outlined"
         compact={true}
-        onPress={() => archiveProject(id)}
+        onPress={() => archiveProject({ token: testToken, id })}
       >
         ARCHIVE
       </Button>
@@ -158,7 +161,7 @@ const EADbuttons = ({ onSubmit, handleSubmit, id }) => {
         color="#ff4d4f"
         mode="outlined"
         compact={true}
-        onPress={() => deleteProject(id)}
+        onPress={() => deleteProject({ token: testToken, id })}
       >
         DELETE
       </Button>
@@ -185,6 +188,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 15,
+    marginTop: 7,
     textAlign: "center",
   },
   touchableOpacity: {

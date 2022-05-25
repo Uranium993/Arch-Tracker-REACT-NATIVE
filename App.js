@@ -1,6 +1,7 @@
 //import { StatusBar } from "expo-status-bar";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import "react-native-gesture-handler";
 import { StyleSheet, Text, TouchableOpacity, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -13,9 +14,11 @@ import { AppRegistry, LogBox } from "react-native";
 import { Provider as PaperProvider, Button } from "react-native-paper";
 import { auth } from "./firebase";
 import { useNavigation } from "@react-navigation/native";
+import {} from "@react-navigation/native";
 import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
 import { projectList } from "./src/Redux/rtkQuery/api";
-import { getProjects } from "./src/Redux/rtkQuery/api";
+
+//WebBrowser.maybeCompleteAuthSession();
 
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs();
@@ -71,7 +74,7 @@ function AppWrapper() {
 
           title: `Welcome`,
         }}
-      />
+      ></Stack.Screen>
     </Stack.Navigator>
   );
 }

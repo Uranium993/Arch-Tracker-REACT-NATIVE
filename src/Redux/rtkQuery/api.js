@@ -1,29 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import axios from "axios";
 
 export const projectList = createApi({
   reducerPath: "allProjects",
-  tagTypes: ["Projects", "Project"],
+  tagTypes: ["Projects"],
 
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://192.168.1.11:8080/api",
+    baseUrl: "https://glacial-chamber-62847.herokuapp.com/api",
+    //baseUrl: "http://192.168.1.11:8080/api",
+    //baseUrl: "http://192.168.0.29:8080/api",
   }),
 
   endpoints: (builder) => ({
     projects: builder.query({
       providesTags: ["Projects"],
 
-      query: () => {
+      query: (token) => {
+        let token1 = token;
         return {
           headers: {
             "Content-type": "application/json",
+            "x-auth-token": token1,
           },
           url: "/projects",
         };
       },
     }),
     getSingleProject: builder.query({
-      providesTags: ["Project"],
       query: (id) => {
         return {
           headers: {
@@ -35,7 +37,6 @@ export const projectList = createApi({
     }),
     addProjectInfo: builder.mutation({
       query: ({ token, ...rest }) => {
-        console.log(token);
         return {
           url: "/projects",
           method: "POST",
@@ -50,17 +51,21 @@ export const projectList = createApi({
       invalidatesTags: ["Projects"],
     }),
     editProjectInfo: builder.mutation({
-      query: ({ id, project }) => {
-        console.log(project);
+      invalidatesTags: ["Projects"],
+      query: ({ id, token, ...project }) => {
+        console.log(token);
         return {
           url: `/projects/${id}`,
           method: "PATCH",
           body: project,
+          headers: {
+            "x-auth-token": token,
+          },
         };
       },
     }),
     updatePhase: builder.mutation({
-      invalidatesTags: ["Project"],
+      invalidatesTags: ["Projects"],
 
       query: ({ id, token, ...rest }) => {
         return {
@@ -77,22 +82,27 @@ export const projectList = createApi({
     }),
 
     archiveProject: builder.mutation({
-      query: (id) => {
+      query: ({ token, id }) => {
         return {
           url: `/projects/${id}`,
           method: "PATCH",
           body: { inactive: true },
+          headers: {
+            "x-auth-token": token,
+          },
         };
       },
     }),
 
     deleteProject: builder.mutation({
       invalidatesTags: ["Projects"],
-      query: (id) => {
-        console.log(id);
+      query: ({ token, id }) => {
         return {
           url: `/projects/${id}`,
           method: "DELETE",
+          headers: {
+            "x-auth-token": token,
+          },
         };
       },
     }),

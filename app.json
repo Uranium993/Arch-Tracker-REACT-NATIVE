@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "expo-arch-tracker",
-    "slug": "expo-arch-tracker",
-    "version": "1.0.0",
+    "scheme": "arch.tracker.package.second",
+    "name": "arch-tracker-djole",
+    "slug": "arch-tracker-slug",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -10,20 +11,22 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "arch.tracker.package.second",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -5,18 +5,13 @@ import PhaseMenu from "../ExpandableBox/PhaseMenu";
 const PhasesBox = ({ singleProject }) => {
   const localDataArr = ["IDR", "IDP", "PGD", "PZI", "PIO"];
 
-  const [reRender, setRerender] = useState(false);
-
   return (
     <View style={style.container}>
       {localDataArr.map((item, index) => (
         <PhaseMenu
-          setRerender={setRerender}
           singleProject={singleProject}
           name={item}
-          // sa setRerender u PhaseMenu promijenim reRender state, pa se apdejtuju
-          // jer se key promijeni
-          key={item + reRender}
+          key={item}
           arrPosition={index}
         />
       ))}

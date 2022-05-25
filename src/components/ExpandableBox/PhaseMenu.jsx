@@ -4,10 +4,9 @@ import ModalPicker from "./ModalPicker";
 import PhaseBubble from "../ProjectBox/PhaseBubble";
 import { useUpdatePhaseMutation } from "../../Redux/rtkQuery/api";
 import { useSelector } from "react-redux";
-const PhaseMenu = ({ setRerender, name, singleProject, arrPosition }) => {
-  const color = singleProject.phases[arrPosition].color;
 
-  const [chooseColor, setChooseColor] = useState(color);
+const PhaseMenu = ({ name, singleProject, arrPosition }) => {
+  const { color, date } = singleProject.phases[arrPosition];
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -25,24 +24,20 @@ const PhaseMenu = ({ setRerender, name, singleProject, arrPosition }) => {
       id: singleProject._id,
       name,
       color: option,
+      date: new Date().toLocaleDateString(),
     };
 
     await updatePhase(colorData);
-
-    // Ovo kad pozovem, promijeni state u phaseBox komponenti i tako se key promijeni
-    // i onda komponenta se apdejtuje, al znam da vako ne treba
-    setTimeout(() => {
-      setRerender((prev) => !prev);
-    }, 500);
   });
 
   return (
     <SafeAreaView style={styles.container}>
       <PhaseBubble
         name={name}
-        color={chooseColor}
+        color={color}
         onPress={() => changeModalVisibility(true)}
       ></PhaseBubble>
+
       <Modal
         transparent={true}
         animationType="fade"
@@ -50,6 +45,7 @@ const PhaseMenu = ({ setRerender, name, singleProject, arrPosition }) => {
         onRequestClose={() => changeModalVisibility(false)}
       >
         <ModalPicker
+          date={date}
           setData={setData}
           changeModalVisibility={changeModalVisibility}
         />
@@ -66,5 +62,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+  },
+  dates: {
+    marginTop: 3,
+    fontSize: 12,
   },
 });

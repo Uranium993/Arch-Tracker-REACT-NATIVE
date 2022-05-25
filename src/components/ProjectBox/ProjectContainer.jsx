@@ -29,11 +29,11 @@ const ProjectContainer = ({ setTestRender, singleProject }) => {
           ]}
         >
           <Accordion
-            singleProject={localData[0]}
+            singleProject={singleProject}
             setExpandContainer={setExpandContainer}
           />
           {/* ----------------------- Voj su ti nest-ovane one faze/boje sto se mijenjaju ------------------------ */}
-          <PhasesBox singleProject={localData[0]} />
+          <PhasesBox singleProject={singleProject} />
         </View>
       ) : null}
     </View>

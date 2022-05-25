@@ -23,6 +23,7 @@ const ModalPicker = (props) => {
     props.changeModalVisibility(false);
     props.setData(option);
   };
+
   const option = OPTIONS.map((item, index) => {
     return (
       <TouchableOpacity
@@ -42,6 +43,7 @@ const ModalPicker = (props) => {
     >
       <View style={[styles.modal, { width: WIDTH - 20, height: HEIGHT / 2 }]}>
         <ScrollView>{option}</ScrollView>
+        <Text style={styles.date}>Last Updated: {props.date}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -57,15 +59,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   modal: {
-    backgroundColor: "white",
+    backgroundColor: "#f0f0f0",
     borderRadius: 10,
+    height: 800,
+    borderWidth: 1,
   },
   option: {
     alignItems: "flex-start",
   },
   text: {
-    margin: 20,
+    margin: 15,
     fontSize: 20,
     fontWeight: "bold",
+  },
+  date: {
+    marginBottom: 15,
+    marginLeft: "55%",
   },
 });

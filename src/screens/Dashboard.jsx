@@ -21,17 +21,17 @@ const wait = (timeout) => {
 };
 
 const Dashboard = () => {
-  const [testRender, setTestRender] = useState(false);
   const [leftOrRight, setLeftOrRight] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  //master i filter sluze search-u
   const [masterData, setMasterData] = useState();
   const [filteredData, setFilteredData] = useState();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+  const { testToken } = useSelector((state) => state.authReducer);
 
-  const { data, isSuccess, error, isLoading } = useProjectsQuery();
+  const { data, isSuccess, error, isLoading } = useProjectsQuery(testToken);
 
   const searchFilter = (text) => {
     if (text) {
@@ -51,15 +51,16 @@ const Dashboard = () => {
     }
   };
 
-  //ovde nesto ne valja!
-
+  // setujem data iz kverija u local state
   useEffect(() => {
     setMasterData(data);
-    setFilteredData(data);
-  }, [data, filteredData, masterData]);
+    setFilteredData(masterData);
+  }, [data, masterData]);
 
+  //OVO GOVNO RADI
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    setMasterData(data);
     setFilteredData(masterData);
     wait(1000).then(() => setRefreshing(false));
   }, []);
@@ -100,13 +101,11 @@ const Dashboard = () => {
                   onRefresh={onRefresh}
                 />
               }
-              //---------------------------- VOJ TI SE RENDERUJU SVI PROJEKTI --------------------------------------------------------------------------
-              data={isSuccess && filteredData}
+              //------------------------------------------ VOJ TI SE RENDERUJU SVI PROJEKTI --------------------------------------------------------------------------
+              data={filteredData}
               renderItem={({ item }) => (
                 <ProjectContainer
-                  //key={item._id + testRender}
-                  testRender={testRender}
-                  setTestRender={setTestRender}
+                  //setTestRender={setTestRender}
                   singleProject={item}
                 />
               )}
@@ -116,7 +115,7 @@ const Dashboard = () => {
           {error ? <Text>{error.error}</Text> : null}
         </View>
       ) : (
-        <Chart />
+        <Chart projects={filteredData} />
       )}
     </View>
   );

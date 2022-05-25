@@ -17,14 +17,26 @@ import { useForm, Controller } from "react-hook-form";
 import { useStyles } from "./login.styles";
 import { auth } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
-import firebase from "firebase";
+//import firebase from "firebase";
 import EmailInput from "../components/LoginInputs/EmailInput";
 import PasswordInput from "../components/LoginInputs/PasswordInput";
 import ConfirmPasswordInput from "../components/LoginInputs/ConfirmPasswordInput";
 import { useDispatch } from "react-redux";
 import { addToken, getUserToken } from "../Redux/slices/authSlice";
 
+//google auth
+import * as WebBrowser from "expo-web-browser";
+import { ResponseType } from "expo-auth-session";
+import * as Google from "expo-auth-session/providers/google";
+import { initializeApp } from "firebase/app";
+import firebase from "firebase/app";
+import "firebase/auth";
+
 const LoginScreen = () => {
+  const [accessToken, setAccessToken] = React.useState();
+  const [userInfo, setUserInfo] = React.useState();
+  const [message, setMessage] = React.useState();
+
   const dispatch = useDispatch();
   const styles = useStyles();
   const navigation = useNavigation();
@@ -34,6 +46,28 @@ const LoginScreen = () => {
   const confirmPasswordInput = useRef();
   const [signup, setSignup] = useState(false);
   const [verificationModal, setVerificationModal] = useState(false);
+
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    responseType: "id_token",
+    androidClientId:
+      "45595534401-c14mg2mbthrp31am2hu63sou63om49ba.apps.googleusercontent.com",
+
+    expoClientId:
+      "45595534401-786k0a24nckj8k2soq6fcfkkjckh5qij.apps.googleusercontent.com",
+
+    scopes: ["email"],
+  });
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { id_token } = response.params;
+
+      const auth = firebase.auth();
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const credential = provider.credential(id_token);
+      auth.signInWithCredential(credential);
+    }
+  }, [response]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -69,6 +103,7 @@ const LoginScreen = () => {
     try {
       const user = await auth.signInWithEmailAndPassword(email, password);
       const token = await user.user.getIdTokenResult().token;
+
       dispatch(addToken(token));
     } catch (err) {
       console.log(err.message);
@@ -174,7 +209,7 @@ const LoginScreen = () => {
             </TouchableOpacity>
             <SizedBox height={16} />
 
-            <TouchableOpacity onPress={loginWithGoogle}>
+            <TouchableOpacity onPress={() => promptAsync()}>
               <View style={styles.buttonSignUp}>
                 <Text style={styles.buttonTitle}>Login with Google</Text>
               </View>
